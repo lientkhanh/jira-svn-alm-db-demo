@@ -1,25 +1,42 @@
-This is an example to show hot to import a  database connection from the Subversion ALM add-on for JIRA.
+This is an example about how to import a  database connection from the Subversion ALM in order to get direct access to the plugin internal database instance.
+This allows you to extend the functionality of the plugin by adding your own reports and processes, for example you might want to capture the moved issue
+event in order to keep aligned the cache or make your own GUI to allow users to update issue keys related to commits.
 
-WARNING!: It's built upon the old JIRA 4.x API. Even it will work on JIRA 5+,
-use please a newer JIRA API version by following the steps below:
+WARNING!: The example is built upon the old JIRA 4.x API. Even it will work on JIRA 5+,
+use please a newer JIRA API version and follow the steps below:
 
-1. Add a copy in your plugin of this class:
+1. Add a copy of the "SWCPublicInterface" Java interface into your sources plugin:
 
 	com.kintosoft.svnwebclient.jira.public_interface.SWCPublicInterface
+	
+	the interface above provides a "getConnection()" method returning an standard JDBC connection
 
-2. Import the the implementation by add-in the following element into your atlassian-plugin.xml descriptor:
+2. Import the implementation of the interface provided by the Subversion ALM plugin
+by adding the component-import element below into your atlassian-plugin.xml descriptor:
 
 	<component-import key="svnalm-public">
 		<interface>com.kintosoft.svnwebclient.jira.public_interface.SWCPublicInterface
 		</interface>
 	</component-import>
 
-3. Use injection in the constructor to get an instance of the object similarly to:
+3. Import the "com.kintosoft.svnwebclient.jira.public_interface" from your Maven pom.xml file to make it visible from your plugin:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <build>
+        <plugins>
+            <plugin>
+                 <configuration>
+ 					<instructions>
+						<Import-Package>com.kintosoft.svnwebclient.jira.public_interface*;version="0.0.0"</Import-Package>
+						....
+
+4. Use injection in the constructor to get an instance of the object similarly to the constructor of this class:
 
 com.kintosoft.jira.svn.demo.SubversionALMDemoProjectTabPanel
 
-4. Get a JDBC connection and do not forget make a commit/rollabak and close the connection in
-order to return it to the pool. See the SubversionALMDemoProjectTabPanel.getHtml() method.
+4. Get a JDBC connection and do not forget make a commit/rollback and CLOSE THE CONNECTION in
+order to return it to the pool. See the "SubversionALMDemoProjectTabPanel.getHtml()" method.
 
 Enjoy.
 
