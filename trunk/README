@@ -1,0 +1,25 @@
+This is an example to show hot to import a  database connection from the Subversion ALM add-on for JIRA.
+
+WARNING!: It's built upon the old JIRA 4.x API. Even it will work on JIRA 5+,
+use please a newer JIRA API version by following the steps below:
+
+1. Add a copy in your plugin of this class:
+
+	com.kintosoft.svnwebclient.jira.public_interface.SWCPublicInterface
+
+2. Import the the implementation by add-in the following element into your atlassian-plugin.xml descriptor:
+
+	<component-import key="svnalm-public">
+		<interface>com.kintosoft.svnwebclient.jira.public_interface.SWCPublicInterface
+		</interface>
+	</component-import>
+
+3. Use injection in the constructor to get an instance of the object similarly to:
+
+com.kintosoft.jira.svn.demo.SubversionALMDemoProjectTabPanel
+
+4. Get a JDBC connection and do not forget make a commit/rollabak and close the connection in
+order to return it to the pool. See the SubversionALMDemoProjectTabPanel.getHtml() method.
+
+Enjoy.
+
