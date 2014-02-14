@@ -1,0 +1,13 @@
+#summary Subversion ALM JDBC example
+
+= Introduction =
+
+This is a JIRA plugin example to show how to use the JDBC connections provided by the Subversion ALM add-on.
+
+It displays a new tab on the JIRA project page showing the amount of commits for the selected project.
+
+
+= Details =
+Please, see the README file included in the sources for more detailed information about how to use it.
+
+Thank you!
