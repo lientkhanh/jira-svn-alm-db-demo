@@ -28,6 +28,10 @@
 		<interface>com.kintosoft.svnwebclient.jira.public_interface.SWCPublicInterface
 		</interface>
 	</component-import>
+	<component-import key="svnalm-commits-eventbus">
+		<interface>com.kintosoft.svnwebclient.jira.public_interface.CommitsEventbusService
+		</interface>
+	</component-import>
   
   <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
   <project-tabpanel key="my-project-tab-panel" name="Subversion ALM Demo" i18n-name-key="my-project-tab-panel.name" class="com.kintosoft.jira.svn.demo.SubversionALMDemoProjectTabPanel">
