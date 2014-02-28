@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>db-demo</name>
-  <comment>This is the Subversion ALM db-demo plugin. It shows how to work with a database connection. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <comment>This is the Subversion ALM db-demo plugin. It shows how to work with a database connection and register commit listeners. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
