@@ -1,0 +1,109 @@
+===========
+VERSION 1.0
+===========
+This is an example about how to import a  database connection from the Subversion ALM in order to get direct access to the plugin internal database instance.
+This allows you to extend the functionality of the plugin by adding your own reports and processes, for example you might want to capture the moved issue
+event in order to keep aligned the cache or make your own GUI to allow users to update issue keys related to commits.
+
+WARNING!: The example is built upon the old JIRA 4.x API. Even it will work on JIRA 5+,
+use please a newer JIRA API version and follow the steps below:
+
+1. Add a copy of the "SWCPublicInterface" Java interface into your sources plugin:
+
+	com.kintosoft.svnwebclient.jira.public_interface.SWCPublicInterface
+	
+	the interface above provides a "getConnection()" method returning an standard JDBC connection
+
+2. Import the implementation of the interface provided by the Subversion ALM plugin
+by adding the component-import element below into your atlassian-plugin.xml descriptor:
+
+	<component-import key="svnalm-public">
+		<interface>com.kintosoft.svnwebclient.jira.public_interface.SWCPublicInterface
+		</interface>
+	</component-import>
+
+3. Import the "com.kintosoft.svnwebclient.jira.public_interface" from your Maven pom.xml file to make it visible from your plugin:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <build>
+        <plugins>
+            <plugin>
+                 <configuration>
+ 					<instructions>
+						<Import-Package>com.kintosoft.svnwebclient.jira.public_interface*;version="0.0.0"</Import-Package>
+						....
+
+4. Use injection in the constructor to get an instance of the object similarly to the constructor of this class:
+
+com.kintosoft.jira.svn.demo.SubversionALMDemoProjectTabPanel
+
+4. Get a JDBC connection and do not forget make a commit/rollback and CLOSE THE CONNECTION in
+order to return it to the pool. See the "SubversionALMDemoProjectTabPanel.getHtml()" method.
+
+Enjoy.
+
+===========
+VERSION 2.0
+===========
+
+Added support for subscribing to  commit events fired by Subversion ALM. This allow listen from a 3rd party plugin for each commit fetched
+from Subversion. This is  a very powerful feature supported from the 5.8.0 version and allows to create review issues or implement smart commits 
+easily.
+
+In this example, the plugin subscribes to all the commits and logs them.Enabling logging for the com.kintosoft.jira.svn package at INFO level 
+might be required to see the traces in the log JIRA log file:
+JIRA > Administration > System > Troubleshooting & Support > Logging and Profiling > Default Loggers > Configure.
+
+In order to implement your own solution you have to follow the steps below:
+
+1. Add a dependency into your pom.xml for the Google's Guava jar library. This library is provided by the JIRA System plugin and (among other features) 
+it provides the Eventbus component for event publish/subscription:
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>10.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+2. Import the "svnalm-commits-eventbus" component shared by Subversion ALM.
+
+	<component-import key="svnalm-commits-eventbus">
+		<interface>com.kintosoft.svnwebclient.jira.public_interface.CommitsEventbusService
+		</interface>
+	</component-import>
+	
+3. Add a copy of the "com.kintosoft.svnwebclient.jira.public_interface.CommitEvent" class into your plugin. Subversion ALM creates and dispatches a new CommitEvent
+object for each commit fetched from Subversion. This class supports the repositoryId, the commit number (revision) and the timestamp with the milliseconds 
+when the CommitEvent was fired.
+
+4. Create your own listener (subscriber) class. Have a look at the "com.kintosoft.jira.svn.MyPluginComponentImpl.CommitEventListener" class for an example.
+Accordingly to the Eventbus specification, you have to add a method with the "@Subscribe" annotation and handling "CommitEvents":
+
+		@Subscribe
+		public void handler(CommitEvent event) {
+			log.info(event.getRevision() + " revision commited in repository "
+					+ event.getRepoId());
+		}
+
+5. Add copy of the "com.kintosoft.svnwebclient.jira.public_interface.CommitsEventbusService" interface into your project. 
+This interface allows to (un) subscribe (from) to the eventbus provided by Subversion ALM. There is an example in the
+"com.kintosoft.jira.svn.MyPluginComponentImpl" class. The "CommitsEventbusService" can be injected in the constructor:
+
+	public void register() {
+		eventBus.startListenting(commitListener);
+		log.info("MyPluginComponentImpl commit listener registered");
+	}
+
+	@PreDestroy
+	public void unregister() {
+		log.info("MyPluginComponentImpl destroying");
+		eventBus.stopListenting(commitListener);
+		log.info("MyPluginComponentImpl commit listener unregistered");
+	} 
+
+Enjoy!
+
+
+

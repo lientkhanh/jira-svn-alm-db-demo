@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <version>${project.version}</version>
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    <param name="plugin-icon">images/pluginIcon.png</param>
+    <param name="plugin-logo">images/pluginLogo.png</param>
+  </plugin-info>
+  <!-- add our i18n resource -->
+  <resource type="i18n" name="i18n" location="db-demo"/>
+  <!-- add our web resources -->
+  <web-resource key="db-demo-resources" name="db-demo Web Resources">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <resource type="download" name="db-demo.css" location="/css/db-demo.css"/>
+    <resource type="download" name="db-demo.js" location="/js/db-demo.js"/>
+    <resource type="download" name="images/" location="/images"/>
+    <context>db-demo</context>
+  </web-resource>
+  <!-- publish our component -->
+  <component key="myPluginComponent" class="com.kintosoft.jira.svn.MyPluginComponentImpl" public="true">
+    <interface>com.kintosoft.jira.svn.MyPluginComponent</interface>
+  </component>
+  <!-- import from the product container -->
+  	<!-- SUBVERSION ALM import public interface -->
+	<component-import key="svnalm-public">
+		<interface>com.kintosoft.svnwebclient.jira.public_interface.SWCPublicInterface
+		</interface>
+	</component-import>
+	<component-import key="svnalm-commits-eventbus">
+		<interface>com.kintosoft.svnwebclient.jira.public_interface.CommitsEventbusService
+		</interface>
+	</component-import>
+  
+  <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+  <project-tabpanel key="my-project-tab-panel" name="Subversion ALM Demo" i18n-name-key="my-project-tab-panel.name" class="com.kintosoft.jira.svn.demo.SubversionALMDemoProjectTabPanel">
+    <description key="my-project-tab-panel.description">The Subversion ALM Demo Tab Panel Plugin</description>
+    <label key="my-project-tab-panel.label"></label>
+    <order>10</order>
+    <resource type="velocity" name="view" location="templates/tabpanels/my-project-tab-panel.vm"/>
+  </project-tabpanel>
+</atlassian-plugin>
