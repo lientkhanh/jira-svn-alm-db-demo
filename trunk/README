@@ -47,17 +47,17 @@ Enjoy.
 VERSION 2.0
 ===========
 
-Added support for subscribing to  commit events fired by Subversion ALM. This allow listen from a 3rd party plugin for each commit fetched
-from Subversion. This is  a very powerful feature supported from the 5.8.0 version and allows to create review issues or implement smart commits 
-easily.
+Added support for subscribing to commit events dispatched by Subversion ALM. This allow listening from 3rd party plugins for each commit fetched
+from Subversion. This is a very powerful feature supported from the 5.7.0 version and allows to create review issues, implement smart commits or
+send email notifications easily by using the JIRA Java API directly from your plug-in.
 
-In this example, the plugin subscribes to all the commits and logs them.Enabling logging for the com.kintosoft.jira.svn package at INFO level 
-might be required to see the traces in the log JIRA log file:
-JIRA > Administration > System > Troubleshooting & Support > Logging and Profiling > Default Loggers > Configure.
+In this example, the demo plug-in subscribes to all the commits and then logs them.Enabling logging for the "com.kintosoft.jira.svn package" at INFO level 
+might be required to see the traces in the log JIRA file:
+JIRA > Administration > System > Troubleshooting & Support > Logging and Profiling > Default Loggers > Configure > ...
 
-In order to implement your own solution you have to follow the steps below:
+In order to implement your own custom solution you have to follow the steps below:
 
-1. Add a dependency into your pom.xml for the Google's Guava jar library. This library is provided by the JIRA System plugin and (among other features) 
+1. Add a dependency into your pom.xml for the Google's Guava jar library. This library is provided by the JIRA System plug-in and (among other features) 
 it provides the Eventbus component for event publish/subscription:
 
 		<dependency>
@@ -74,7 +74,7 @@ it provides the Eventbus component for event publish/subscription:
 		</interface>
 	</component-import>
 	
-3. Add a copy of the "com.kintosoft.svnwebclient.jira.public_interface.CommitEvent" class into your plugin. Subversion ALM creates and dispatches a new CommitEvent
+3. Add a copy of the "com.kintosoft.svnwebclient.jira.public_interface.CommitEvent" class into your plug-in. Subversion ALM creates and dispatches a new "CommitEvent"
 object for each commit fetched from Subversion. This class supports the repositoryId, the commit number (revision) and the timestamp with the milliseconds 
 when the CommitEvent was fired.
 
@@ -83,6 +83,7 @@ Accordingly to the Eventbus specification, you have to add a method with the "@S
 
 		@Subscribe
 		public void handler(CommitEvent event) {
+			//Commits events are received here
 			log.info(event.getRevision() + " revision commited in repository "
 					+ event.getRepoId());
 		}
